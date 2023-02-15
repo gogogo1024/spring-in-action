@@ -2,3 +2,9 @@ spring:
   datasource:
     generate-unique-name: false
     name: tacocloud
+  cassandra:
+    keyspace-name:  tacocloud
+    schema-action: CREATE_IF_NOT_EXISTS
+    local-datacenter: datacenter1
+    username: taco_cloud
+    password: taco_cloud

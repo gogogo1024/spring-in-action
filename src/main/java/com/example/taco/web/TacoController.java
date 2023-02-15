@@ -1,5 +1,6 @@
 package com.example.taco.web;
 
+import com.example.taco.TacoUDT;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -69,8 +70,8 @@ public class TacoController {
         if (errors.hasErrors()) {
             return "design";
         }
-
-        tacoOrder.addTaco(taco);
+        TacoUDT tacoUDT = new TacoUDT(taco.getName(), taco.getIngredients());
+        tacoOrder.addTaco(tacoUDT);
 
         return "redirect:/orders/current";
     }
