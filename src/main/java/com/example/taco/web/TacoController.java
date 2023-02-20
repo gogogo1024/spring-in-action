@@ -1,22 +1,22 @@
 package com.example.taco.web;
 
-import jakarta.validation.Valid;
+import com.example.taco.Ingredient;
+import com.example.taco.Ingredient.Type;
+import com.example.taco.Taco;
+import com.example.taco.TacoOrder;
+import com.example.taco.User;
+import com.example.taco.data.IngredientRepository;
+import com.example.taco.data.TacoRepository;
+import com.example.taco.data.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.taco.Ingredient;
-import com.example.taco.Ingredient.Type;
-import com.example.taco.TacoOrder;
-import com.example.taco.Taco;
-import com.example.taco.data.IngredientRepository;
-
+import javax.validation.Valid;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,14 +24,23 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/design")
 @SessionAttributes("tacoOrder")
+@Slf4j
 public class TacoController {
 
     private final IngredientRepository ingredientRepo;
 
+    private final TacoRepository tacoRepo;
+
+    private final UserRepository userRepo;
+
     @Autowired
     public TacoController(
-            IngredientRepository ingredientRepo) {
+            IngredientRepository ingredientRepo,
+            TacoRepository tacoRepo,
+            UserRepository userRepo) {
         this.ingredientRepo = ingredientRepo;
+        this.tacoRepo = tacoRepo;
+        this.userRepo = userRepo;
     }
 
     @ModelAttribute
@@ -46,7 +55,7 @@ public class TacoController {
         }
     }
 
-    @ModelAttribute(name = "tacoOrder")
+    @ModelAttribute(name = "order")
     public TacoOrder order() {
         return new TacoOrder();
     }
@@ -54,6 +63,13 @@ public class TacoController {
     @ModelAttribute(name = "taco")
     public Taco taco() {
         return new Taco();
+    }
+
+    @ModelAttribute(name = "user")
+    public User user(Principal principal) {
+        String username = principal.getName();
+        User user = userRepo.findByUsername(username);
+        return user;
     }
 
     @GetMapping
@@ -64,17 +80,21 @@ public class TacoController {
     @PostMapping
     public String processTaco(
             @Valid Taco taco, Errors errors,
-            @ModelAttribute TacoOrder tacoOrder) {
+            @ModelAttribute TacoOrder order) {
+
+        log.info("   --- Saving taco");
 
         if (errors.hasErrors()) {
             return "design";
         }
-        tacoOrder.addTaco(taco);
+
+        Taco saved = tacoRepo.save(taco);
+        order.addTaco(saved);
 
         return "redirect:/orders/current";
     }
 
-    private Iterable<Ingredient> filterByType(
+    private List<Ingredient> filterByType(
             List<Ingredient> ingredients, Type type) {
         return ingredients
                 .stream()

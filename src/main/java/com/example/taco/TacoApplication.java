@@ -1,11 +1,12 @@
 package com.example.taco;
 
+import com.example.taco.Ingredient.Type;
 import com.example.taco.data.IngredientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import com.example.taco.Ingredient.Type;
+
 @SpringBootApplication
 public class TacoApplication {
 
@@ -31,5 +32,4 @@ public class TacoApplication {
             }
         };
     }
-
 }
