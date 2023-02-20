@@ -1,5 +1,7 @@
 # spring in action 6th
+
 ### cassandra  docker script
+
 1. docker create cassandra
     - `docker network create cassandra-net`
     - ``docker run --name my-cassandra \

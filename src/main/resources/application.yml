@@ -1,0 +1,28 @@
+logging:
+  level:
+    tacos: DEBUG
+---
+spring:
+  logging:
+    level:
+      tacos: WARN
+  datasource:
+    generate-unique-name: false
+    name: tacocloud
+#    url: jdbc:mysql://localhost/tacocloud
+#    username: tacouser
+#    password: tacopassword
+
+  #  cassandra:
+  #    keyspace-name:  tacocloud
+  #    schema-action: CREATE_IF_NOT_EXISTS
+  #    local-datacenter: datacenter1
+  #    username: taco_cloud
+  #    password: taco_cloud
+  config:
+    activate:
+      on-profile: ["prod","audit"]
+taco:
+  orders:
+    pageSize: 10
+
